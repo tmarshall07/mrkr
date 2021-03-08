@@ -2,6 +2,18 @@
   text-align: center;
 }
 
+.position {
+  display: inline-block;
+  margin-bottom: 10px;
+  background: #4c4b4b;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.highlight {
+  background-color: turquoise;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
