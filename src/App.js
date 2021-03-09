@@ -26,6 +26,11 @@ function App() {
   const handleHighlightRange = () => {
     highlighter.highlightRange(200, 300);
   }
+
+  const handleUpdateOffsets = () => {
+    const offsets = highlighter.getOffsets();
+    setPositions({ start: offsets.startOffset, end: offsets.endOffset })
+  }
   
   return (
     <div className="App">
@@ -40,6 +45,7 @@ function App() {
             <div className="position">End: {positions.end}</div>
           </div>
           <div>
+            <button className="button" onClick={handleUpdateOffsets}>Find positions</button>
             <button className="button" onClick={handleHighlightRange}>Highlight range</button>
             <button className="button" onClick={handleClearHighlights}>Clear</button>
           </div>

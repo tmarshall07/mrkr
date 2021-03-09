@@ -32,6 +32,12 @@ export default class Highlighter {
     this.element = element;
   }
 
+  getHighlightedNodes(): HTMLElement[] {
+    if (!this.element) return [];
+
+    return Array.from(this.element.querySelectorAll(`.${this.highlightClass}`));
+  }
+
   /**
    * Clears the highlights from the container element
    *
@@ -40,17 +46,15 @@ export default class Highlighter {
   clear(): void {
     if (!this.element) return;
 
-    const highlightedNodes = this.element.querySelectorAll(`.${this.highlightClass}`);
+    const highlightedNodes = this.getHighlightedNodes();
     highlightedNodes.forEach((highlightedNode) => {
-      highlightedNode.replaceWith(...highlightedNode.childNodes);
+      highlightedNode.replaceWith(...Array.from(highlightedNode.childNodes));
     });
   }
 
-  highlightSelection(): { positions: { start?: number, end?: number }} {
+  highlightSelection(): { startOffset?: number; endOffset?: number } {
     const selection = window.getSelection();
-    let results = {
-      positions: {},
-    };
+    let results = {};
 
     // If there's no selection object
     if (!selection) return results;
@@ -70,8 +74,6 @@ export default class Highlighter {
       const startTextNode = startContainer;
       const endTextNode = endContainer;
 
-      const positions = this.getAbsolutePositions(startTextNode, startOffset, endTextNode, endOffset);
-  
       // If no content's actually been selected
       if (startTextNode === endTextNode && endOffset === startOffset) return results;
   
@@ -112,7 +114,7 @@ export default class Highlighter {
       }
       selection.removeAllRanges();
   
-      return { positions };
+      return this.getOffsets();
     }
 
     return results;
@@ -150,36 +152,31 @@ export default class Highlighter {
     });
   }
 
-  getAbsolutePositions(startTextNode: ChildNode, startOffset: number, endTextNode: ChildNode, endOffset: number): {
-    start?: number;
-    end?: number;
-  } {
+  getOffsets() {
+    if (!this.element) return {};
+
     const textNodes = textNodesUnder(this.element);
+    const highlightedNodes = this.getHighlightedNodes().reduce((arr: Text[], current) => [...arr,  ...textNodesUnder(current)], []);
+
+    let startOffset = 0;
+    let endOffset = 0;
 
     let currentIndex = 0;
-    let startIndex = 0;
-    let endIndex = 0;
+    textNodes.some((textNode) => {
+      if (!textNode.textContent) return false;
 
-    textNodes.forEach((node) => {
-      if (!node.textContent) return;
-
-      if (node === startTextNode) {
-        startIndex = currentIndex + startOffset;
-        if (startTextNode === endTextNode) {
-          endIndex = currentIndex + endOffset;
+      if (highlightedNodes.find((node) => node === textNode)) {
+        if (!startOffset) {
+          startOffset = currentIndex;
         }
-      } else if (node === endTextNode) {
-        endIndex = currentIndex + endOffset;
-      } else {
-        currentIndex += node.textContent.length;
+        
+        endOffset = currentIndex + textNode.textContent.length;
       }
-      return false;
+
+      currentIndex += textNode.textContent.length;
     });
 
-    return {
-      start: startIndex,
-      end: endIndex,
-    }
+    return { startOffset, endOffset };
   }
 
   highlightNode (text: string | null = '', startOffset: number, endOffset: number): ChildNode[] {

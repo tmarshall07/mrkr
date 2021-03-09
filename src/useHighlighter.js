@@ -16,7 +16,14 @@ export default function useHighlighter (options = {}) {
   const handleHighlight =  () => {
     const results = highlighterRef.current.highlightSelection();
 
-    if (results) onHighlight(results.positions);
+    if (results) {
+      const positions = {
+        start: results.startOffset,
+        end: results.endOffset,
+      };
+
+      onHighlight(positions)
+    };
   }
 
   useEffect(() => {
