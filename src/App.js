@@ -10,13 +10,21 @@ function App() {
     setPositions(positions);
   }
 
-  const highlighter = useHighlighter({
+  const { init, highlighter } = useHighlighter({
     onHighlight: handleOnHighlight,
   });
 
-  const init = () => {
+  const initHighlighter = () => {
     console.log("INIT")
-    highlighter.init('.fr-element.fr-view');
+    init('.fr-element.fr-view');
+  }
+
+  const handleClearHighlights = () => {
+    highlighter.clear();
+  }
+
+  const handleHighlightRange = () => {
+    highlighter.highlightRange(200, 300);
   }
   
   return (
@@ -31,8 +39,12 @@ function App() {
             </div>
             <div className="position">End: {positions.end}</div>
           </div>
+          <div>
+            <button className="button" onClick={handleHighlightRange}>Highlight range</button>
+            <button className="button" onClick={handleClearHighlights}>Clear</button>
+          </div>
           <div id="ques-edit">
-            <EditorComponent onInit={init} />
+            <EditorComponent onInit={initHighlighter} />
           </div>
         </div>
       </header>

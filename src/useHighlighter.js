@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import { highlight} from './highlighter';
+import { useEffect, useRef, useState } from "react";
+import Highlighter from './Highlighter';
+
 export default function useHighlighter (options = {}) {
   const { onHighlight = () => {} } = options;
+  const highlighterRef = useRef();
 
   const [element, setElement] = useState();
 
   const init = (selector) => {
     const el = document.querySelector(selector);
+    highlighterRef.current.setContainerElement(el);
     setElement(el);
   }
 
   const handleHighlight =  () => {
-    const results = highlight(element);
+    const results = highlighterRef.current.highlightSelection();
 
     if (results) onHighlight(results.positions);
   }
@@ -26,7 +29,13 @@ export default function useHighlighter (options = {}) {
     }
   }, [element]);
 
+  useEffect(() => {
+    const highlighter = new Highlighter();
+    highlighterRef.current = highlighter;
+  }, []);
+
   return {
     init,
+    highlighter: highlighterRef.current,
   }
 }
