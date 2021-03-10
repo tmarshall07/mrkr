@@ -7784,6 +7784,11 @@ move-concurrently@^1.0.1:
     rimraf "^2.5.4"
     run-queue "^1.0.3"
 
+mrkrjs@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/mrkrjs/-/mrkrjs-1.0.5.tgz#84314e6fa32561cb8d34fbf1d89e93679e76503a"
+  integrity sha512-W5uMTsITyLmCCFAfOf+r97P4d85naNpR2+AeGK7bAieHWJG4WbiWfv4zvMNwn9hWlpPJMhywjw+wrGjKek92Tw==
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"

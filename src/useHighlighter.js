@@ -1,43 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-import Highlighter from './Highlighter';
+import Mrkr from 'mrkrjs';
 
 export default function useHighlighter (options = {}) {
   const { onHighlight = () => {} } = options;
   const highlighterRef = useRef();
 
-  const [element, setElement] = useState();
-
   const init = (selector) => {
     const el = document.querySelector(selector);
     highlighterRef.current.setContainerElement(el);
-    setElement(el);
+
+    highlighterRef.current.enableSelection();
   }
 
-  const handleHighlight =  () => {
-    const results = highlighterRef.current.highlightSelection();
-
-    if (results) {
-      const positions = {
-        start: results.startOffset,
-        end: results.endOffset,
-      };
-
-      onHighlight(positions)
+  const handleHighlight =  (e, offsets) => {
+    const positions = {
+      start: offsets.startOffset,
+      end: offsets.endOffset,
     };
+
+    onHighlight(positions)
   }
 
   useEffect(() => {
-    if (element) {
-      element.addEventListener('pointerup', handleHighlight);
-
-      return () => {
-        element.removeEventListener('pointerup', handleHighlight);
-      }
-    }
-  }, [element]);
-
-  useEffect(() => {
-    const highlighter = new Highlighter();
+    const highlighter = new Mrkr({ onHighlightSelection: handleHighlight });
     highlighterRef.current = highlighter;
   }, []);
 
